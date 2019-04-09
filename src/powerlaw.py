@@ -156,6 +156,26 @@ def vertex_copy_model(c, gamma, num_steps):
 def lnfa_model(c, sigma, num_steps):
 
     G = get_seed_multidigraph(c)
+    nodes = G.nodes()
+    node_fitness_values = [get_fitness(node) for node in nodes]
+    for node_n_plus_one in range(num_steps):
+        random_fitness = get_fitness(sigma)
+        for i in range(c):
+            fitness_i = node_fitness_values[i]
+            fitness_j_sum = 0
+            for j in range(0, len(G.nodes()) - 1):
+                fitness_j_sum += node_fitness_values[j]
+            probability_of_edge = fitness_i/fitness_j_sum
+            probability = random.random()
+            if probability <= probability_of_edge:
+                new_node = i
+            else:
+                new_node = random.randint(0, len(nodes) - 1)
+            G.add_node(node_n_plus_one)
+            G.add_edge(node_n_plus_one, new_node)
+        node_fitness_values.append(random_fitness)
+
+
 
     ############
     #
@@ -180,8 +200,12 @@ def lnfa_model(c, sigma, num_steps):
 
 G1 = vertex_copy_model(1, 1/2, 10000)
 plot_degrees(G1)
+print(get_alpha(G1, 20))
 
-G2 = lnfa_model(1, 2, 100)
+G2 = lnfa_model(1, 2, 20000)
+plot_degrees(G2)
+print(get_alpha(G2, 20))
+
 
 
 #### once your code is working, use these two methods to generate the 8 networks
