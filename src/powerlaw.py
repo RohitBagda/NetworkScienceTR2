@@ -1,6 +1,7 @@
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plot
+import random
 
 ####################################################################################
 #
@@ -113,10 +114,33 @@ def run_lnfa(out_dir_name):
 # Your implementation starts here
 #
 ##########################################################################
+# def get_random_node(graph):
+#     # nodes = graph.nodes()
+#     # print(nodes)
+#     # random_num = random.randint(0, len(nodes) - 1)
+#     # return nodes[random_num]
 
 def vertex_copy_model(c, gamma, num_steps):
 
     G = get_seed_multidigraph(c)
+
+    for n_plus_one in range(num_steps):
+        node_i = random.randint(0, len(G.nodes()) - 1)
+        # print(node_i)
+        node_i_neighbours = G.neighbors(node_i)
+        for node_j in node_i_neighbours:
+            probability = random.random()
+            if probability <= gamma:
+                new_neighbour = node_j
+            else:
+                new_neighbour = random.randint(0, len(G.nodes()) - 1)
+        G.add_node(n_plus_one)
+        G.add_edge(n_plus_one, new_neighbour)
+
+    return G
+
+
+
 
     ############
     #
@@ -154,7 +178,8 @@ def lnfa_model(c, sigma, num_steps):
 
 #### replace this code with your own code to test your models
 
-G1 = vertex_copy_model(1, 1/2, 100)
+G1 = vertex_copy_model(1, 1/2, 10000)
+plot_degrees(G1)
 
 G2 = lnfa_model(1, 2, 100)
 
