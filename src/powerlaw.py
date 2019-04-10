@@ -124,9 +124,9 @@ def vertex_copy_model(c, gamma, num_steps):
 
     G = get_seed_multidigraph(c)
 
-    for n_plus_one in range(num_steps):
+    for num_step in range(num_steps):
+        n_plus_one = len(G.nodes())
         node_i = random.randint(0, len(G.nodes()) - 1)
-        # print(node_i)
         node_i_neighbours = G.neighbors(node_i)
         for node_j in node_i_neighbours:
             probability = random.random()
@@ -156,22 +156,17 @@ def vertex_copy_model(c, gamma, num_steps):
 def lnfa_model(c, sigma, num_steps):
 
     G = get_seed_multidigraph(c)
-    nodes = G.nodes()
-    node_fitness_values = [get_fitness(node) for node in nodes]
-    for node_n_plus_one in range(num_steps):
+    node_fitness_values = [get_fitness(sigma) for node in G.nodes()]
+    for num_step in range(num_steps):
+        node_n_plus_one = len(G.nodes())
         random_fitness = get_fitness(sigma)
-        for i in range(c):
-            fitness_i = node_fitness_values[i]
-            fitness_j_sum = 0
-            for j in range(0, len(G.nodes()) - 1):
-                fitness_j_sum += node_fitness_values[j]
-            probability_of_edge = fitness_i/fitness_j_sum
-            probability = random.random()
-            if probability <= probability_of_edge:
-                new_node = i
-            else:
-                new_node = random.randint(0, len(nodes) - 1)
-            G.add_node(node_n_plus_one)
+        fitness_j_sum = 0
+        for j in range(len(G.nodes())):
+            fitness_j_sum += node_fitness_values[j]
+        fitness_dist = [(value / fitness_j_sum) for value in node_fitness_values]
+        G.add_node(node_n_plus_one)
+        for c_link in range(c):
+            new_node = np.random.choice(a=[node_index for node_index in range(len(G.nodes()) - 1)], p=fitness_dist)
             G.add_edge(node_n_plus_one, new_node)
         node_fitness_values.append(random_fitness)
 
@@ -200,11 +195,11 @@ def lnfa_model(c, sigma, num_steps):
 
 G1 = vertex_copy_model(1, 1/2, 10000)
 plot_degrees(G1)
-print(get_alpha(G1, 20))
+print(get_alpha(G1, 8))
 
-G2 = lnfa_model(1, 2, 20000)
+G2 = lnfa_model(1, 2, 10000)
 plot_degrees(G2)
-print(get_alpha(G2, 20))
+print(get_alpha(G2, 8))
 
 
 
