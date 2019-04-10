@@ -114,11 +114,6 @@ def run_lnfa(out_dir_name):
 # Your implementation starts here
 #
 ##########################################################################
-# def get_random_node(graph):
-#     # nodes = graph.nodes()
-#     # print(nodes)
-#     # random_num = random.randint(0, len(nodes) - 1)
-#     # return nodes[random_num]
 
 def vertex_copy_model(c, gamma, num_steps):
     G = get_seed_multidigraph(c) #create the graph
