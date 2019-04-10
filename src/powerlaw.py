@@ -121,65 +121,74 @@ def run_lnfa(out_dir_name):
 #     # return nodes[random_num]
 
 def vertex_copy_model(c, gamma, num_steps):
-
-    G = get_seed_multidigraph(c)
-
+    G = get_seed_multidigraph(c) #create the graph
     for num_step in range(num_steps):
+        #the n+1th node has index n (which is the number of nodes in G)
+        #because the nodes are indexed starting with 0
         n_plus_one = len(G.nodes())
+
+        #get a random node i from the graph
         node_i = random.randint(0, len(G.nodes()) - 1)
+
+        #get neighbours of i
         node_i_neighbours = G.neighbors(node_i)
         for node_j in node_i_neighbours:
+            #generate a value between 0 and 1, if that value is less than or equal to Gamma,
+            #then set the target to node j
+            #otherwise, the target is any random node
             probability = random.random()
             if probability <= gamma:
                 new_neighbour = node_j
             else:
                 new_neighbour = random.randint(0, len(G.nodes()) - 1)
+        #add the node to the graph and add the arc from the new node to the new neighbour
         G.add_node(n_plus_one)
         G.add_edge(n_plus_one, new_neighbour)
 
     return G
 
 
-
-
-    ############
-    #
-    # You provide the implementation that adds num_steps vertices
-    # according to the Vertex Copy model
-    #
-    ###########
-
-    return G
-
-
-
 def lnfa_model(c, sigma, num_steps):
+    G = get_seed_multidigraph(c) #create the graph
 
-    G = get_seed_multidigraph(c)
+    #create an array whose values are the "fitness" values for the node
+    #i.e, the ith value of the array is the "fitness" of node i
     node_fitness_values = [get_fitness(sigma) for node in G.nodes()]
+
     for num_step in range(num_steps):
+        # the n+1th node has index n (which is the number of nodes in G)
+        # because the nodes are indexed starting with 0
         node_n_plus_one = len(G.nodes())
+
+        #get fitness for new node
         random_fitness = get_fitness(sigma)
+        #sum up all the fitness values currently in the graph
+        #thus, the probability of selecting a node
+        #is the fitness value of that node divided by the sum
         fitness_j_sum = 0
         for j in range(len(G.nodes())):
             fitness_j_sum += node_fitness_values[j]
+
+        #create an array which contains the probabilities of each node,
+        #the ith element in this array is the probability of selecting node i
         fitness_dist = [(value / fitness_j_sum) for value in node_fitness_values]
+
+        #add node to graph
         G.add_node(node_n_plus_one)
+
+        #create c links
+        #we select a random node from the array based on the given probability distribution
+        #in the fitness_dist and create an arc from new node to selected
         for c_link in range(c):
-            new_node = np.random.choice(a=[node_index for node_index in range(len(G.nodes()) - 1)], p=fitness_dist)
-            G.add_edge(node_n_plus_one, new_node)
+            #we exclude the nth node because we are selecting from all the other
+            #nodes in the graph excluding the new one we just added
+            new_neighbour = np.random.choice(a=[node_index for node_index in range(len(G.nodes()) - 1)], p=fitness_dist)
+
+            #add the edge from new node to selected neighbour
+            G.add_edge(node_n_plus_one, new_neighbour)
+
+        #add the fitness value to our array of fitness values
         node_fitness_values.append(random_fitness)
-
-
-
-    ############
-    #
-    # You provide the implementation that adds num_steps vertices
-    # according to the LNFA model. Don't forget to assign fitnes
-    # values to the c+1 vertrices in the seed graph G.
-    #
-    ###########
-
 
     return G
 
