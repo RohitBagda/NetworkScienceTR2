@@ -197,20 +197,20 @@ def lnfa_model(c, sigma, num_steps):
 
 #### replace this code with your own code to test your models
 
-G1 = vertex_copy_model(1, 1/2, 10000)
-plot_degrees(G1)
-print(get_alpha(G1, 8))
+# G1 = vertex_copy_model(1, 1/2, 10000)
+# plot_degrees(G1)
+# print(get_alpha(G1, 8))
+#
+# G2 = lnfa_model(1, 2, 10000)
+# plot_degrees(G2)
+# print(get_alpha(G2, 8))
 
-G2 = lnfa_model(1, 2, 10000)
-plot_degrees(G2)
-print(get_alpha(G2, 8))
 
 
-
-#### once your code is working, use these two methods to generate the 8 networks
-#### that will be part of your written report
-#run_vertex_copy('/output_dir_name')
-#run_lnfa('/output_dir_name')
+### once your code is working, use these two methods to generate the 8 networks
+### that will be part of your written report
+run_vertex_copy('../output')
+run_lnfa('../output')
 
 
 
